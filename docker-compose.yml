@@ -1,0 +1,45 @@
+# мониторинг логов приложений используя кластер Elasticsearch 
+
+
+version: '3'
+
+services:
+
+  # генерирует тестовый лог для проверки работоспособности системы
+  log-script:
+    image: alpine
+    container_name: log-script
+    restart: unless-stopped
+    volumes: 
+      - app-logs:/mylogs
+    command: sh -c 'while :;do n=$$(($$RANDOM%50)); echo "log-script. Next message in $$n sec.">>/mylogs/testlog.log; sleep $$n; done'
+
+
+  # следит за новыми файлами логов и посылает новые строки логов
+  # согласно настройкам определенным в configs/filebeat.yml
+  log-watcher-filebeat:
+    image: docker.elastic.co/beats/filebeat:7.7.0
+    container_name: log-watcher-filebeat
+    restart: unless-stopped
+    volumes:
+      # настроечный файл Filebeat
+      - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      # директория где Filebeat следит за файлами логов
+      - app-logs:/logs
+
+    # чтобы не сыпало ошибки на экран для output.console определенного в ./configs/filebeat.yml убрать -e
+    #  и ослабить ограничения по доступу --strict.perms=false
+    # https://www.elastic.co/guide/en/beats/libbeat/7.6/config-file-permissions.html
+    command: filebeat -e --strict.perms=false
+
+
+# Данные
+volumes:
+  app-logs:
+    external: true
+
+# outer network to communicate with other services 
+networks:
+    default:
+      external:
+        name: auth_proxy_network

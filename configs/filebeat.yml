@@ -66,9 +66,10 @@ output:
     # список хостов elasticsearch
     hosts:
       - es01:9200
+      # - https://log-monitor.rg.ru/elasticsearch/
     # имя/пароль если необходимо
     # username: "admin"
-    # password: "r***1" 
+    # password: "r****1" 
     
     # Имя индекса elasticsearch. По умолчанию:
     # index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"

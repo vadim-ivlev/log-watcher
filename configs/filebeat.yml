@@ -67,8 +67,8 @@ output:
     hosts:
       - es01:9200
     # имя/пароль если необходимо
-    # username: "filebeat_internal"
-    # password: "YOUR_PASSWORD" 
+    # username: "admin"
+    # password: "r***1" 
     
     # Имя индекса elasticsearch. По умолчанию:
     # index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"

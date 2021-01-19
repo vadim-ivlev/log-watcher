@@ -6,13 +6,13 @@ version: '3'
 services:
 
   # генерирует тестовый лог для проверки работоспособности системы
-  log-script:
+  log-watcher-log-script:
     image: alpine
-    container_name: log-script
+    container_name: log-watcher-log-script
     restart: unless-stopped
     volumes: 
       - app-logs:/mylogs
-    command: sh -c 'while :;do n=$$(($$RANDOM%50)); echo "log-script. Next message in $$n sec.">>/mylogs/testlog.log; sleep $$n; done'
+    command: sh -c 'while :;do n=$$(($$RANDOM%20)); echo "log-watcher log-script. Next message in $$n sec.">>/mylogs/log-watcher-testlog.log; sleep $$n; done'
 
 
   # следит за новыми файлами логов и посылает новые строки логов

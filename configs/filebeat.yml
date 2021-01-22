@@ -66,10 +66,14 @@ output:
     # список хостов elasticsearch
     hosts:
       - es01:9200
-      # - https://log-monitor.rg.ru/elasticsearch/
+      # - http://log-monitor-caddy:8080
+      # - host.docker.internal:9094
+      # - https://log-monitor.rg.ru/auth_es/
+    # protocol: http
+    # path: /authes/
     # имя/пароль если необходимо
     # username: "admin"
-    # password: "r****1" 
+    # password: "rosgas2011" 
     
     # Имя индекса elasticsearch. По умолчанию:
     # index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"

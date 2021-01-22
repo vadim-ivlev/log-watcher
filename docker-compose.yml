@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     volumes: 
       - app-logs:/mylogs
-    command: sh -c 'while :;do n=$$(($$RANDOM%20)); echo "log-watcher log-script. Next message in $$n sec.">>/mylogs/log-watcher-testlog.log; sleep $$n; done'
+    command: sh -c 'while :;do n=$$(($$RANDOM%20)); echo "dockerweb.rgwork.ru log-script. Next message in $$n sec.">>/mylogs/log-watcher-testlog.log; sleep $$n; done'
 
 
   # следит за новыми файлами логов и посылает новые строки логов

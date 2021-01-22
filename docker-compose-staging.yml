@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     volumes:
       # настроечный файл Filebeat
-      - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./configs/filebeat-staging.yml:/usr/share/filebeat/filebeat.yml
       # директория где Filebeat следит за файлами логов
       - app-logs:/logs
 

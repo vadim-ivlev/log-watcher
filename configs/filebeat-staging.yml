@@ -1,0 +1,89 @@
+# ************************************************************************************
+# Настроечный файл filebeat.
+# более полную версию смотри в _scraps/configs/filebeat.yml
+
+# Filebeat следит за файлами логов из нескольких источников (input).
+# Преобразует новые записи в логах с помощью процессоров (processors)
+# и отправляет их в приемник данных (output), 
+# в качестве которого может выступать консоль, Логсташ или Эластик.
+
+# input -> processors -> |
+# input -> processors -> | -> processors -> output
+# input -> processors -> |
+
+# Смотри:  https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html
+
+# **************************************************************************************
+
+
+  
+# I N P U T S ---------------------------------------------------------------------- 
+# Источники данных
+
+filebeat.inputs:
+  # тип источника данных. Может быть Log, Stdin, Container, Kafka, Redis, UDP, Docker и т.д.
+  - type: log
+    # Следить за всеми фалами во всех поддиректориях /logs/ 
+    paths:
+      - /logs/**
+    # закрывать хандлер файла после неоторого времени неактивности
+    close_inactive: 10m
+    # частота сканирования директорий на наличие новых файлов
+    scan_frequency: 10s
+
+
+# P R O C E S S O R S ---------------------------------------------------------------
+
+# Глобальные процессоры для всех определенных источников сразу
+processors:
+
+
+  # Если название файла содержит подстроку "json" 
+  # декодирует поле message и помещает объекты JSON в поле message_decoded
+  - decode_json_fields:
+      when:
+        contains:
+          log.file.path: "json"
+      fields: ["message"]
+      # process_array: false
+      # max_depth: 1
+      overwrite_keys: true
+      target: "message_decoded"
+      # add_error_key: true      
+  
+
+
+# O U T P U T S --------------------------------------------------------------------------
+# Приемники данных.
+# разрешен только один приемник данных с полем  enabled:true
+
+
+output:
+
+  # Эластик. Смотри https://www.elastic.co/guide/en/beats/filebeat/current/elasticsearch-output.html
+  elasticsearch:
+    enabled: true
+    # список хостов elasticsearch
+    hosts:
+      # - es01:9200
+      # - http://log-monitor-caddy:8080
+      # - host.docker.internal:9094
+      - http://dockerweb.rgwork.ru:9099
+    # protocol: http
+    # path: /authes/
+    # имя/пароль если необходимо
+    # username: "admin"
+    # password: "rosgas2011" 
+    
+    # Имя индекса elasticsearch. По умолчанию:
+    # index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+    # Если вы измените этот параметр, вам также необходимо настроить параметры 
+    # setup.template.name и setup.template.pattern (см. Шаблон индекса Elasticsearch).
+        
+
+
+# setup.template.name: "filebeat"
+# setup.template.pattern: "filebeat-*"
+
+# вместо настроек имени индекса, шаблона и паттерна можно настроить псевдоним
+setup.ilm.rollover_alias: "app-logs"  

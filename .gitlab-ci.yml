@@ -9,6 +9,7 @@ stages:
     - start_services
     - messages
 
+# copy_files------------------------------------------------------
 
 copy_files_to_production_job:
     stage: copy_files
@@ -20,6 +21,19 @@ copy_files_to_production_job:
     only:
         - production
 
+copy_files_to_staging_job:
+    stage: copy_files
+    script:
+        - ./sh/build-deploy-directory-staging.sh  
+        - ./.import-ssh-key.sh "$PROD_RSA_PRIVATE_KEY"
+        - ssh gitupdater@dockerweb2.rgwork.ru 'rm -rf /home/gitupdater/'$IMAGE_NAME
+        - scp -pr $BUILD_PATH/deploy gitupdater@dockerweb2.rgwork.ru:/home/gitupdater/$IMAGE_NAME
+    only:
+        - staging
+
+
+
+# start_services --------------------------------------------------
 
 start_production_services_job:
     stage: start_services
@@ -31,7 +45,18 @@ start_production_services_job:
     only:
         - production
 
+start_staging_services_job:
+    stage: start_services
+    dependencies:
+        - copy_files_to_staging_job
+    script:
+        - ./.import-ssh-key.sh "$DEPLOY_RSA_PRIVATE_KEY"
+        - ssh gitupdater@dockerweb2.rgwork.ru $IMAGE_NAME
+    only:
+        - staging
 
 
+
+# messages ---------------------------------------------------------
 
 include: .gitlab-ci-messages.yml

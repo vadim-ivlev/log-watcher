@@ -3,11 +3,12 @@ telegram_message_on_success:
     allow_failure: true
     # dependencies:
     #     - start_production_services_job
-    # when: on_success
+    when: on_success
     script:
         - curl -v http://proxy.govoru.com/?message=%E2%9C%85%20Success.%20Auto%20deploy%20on%20${CI_PROJECT_NAME}%20is%20completed,%20Pipeline:%20${CI_PIPELINE_URL}%20by%20${GITLAB_USER_LOGIN}
-    # only:
-    #     - production
+    only:
+        - production
+        - staging
 
 
 telegram_message_on_failure:
@@ -18,5 +19,6 @@ telegram_message_on_failure:
     when: on_failure
     script:
         - curl -v http://proxy.govoru.com/?message=%E2%9D%8C%20Error.%20Auto%20deploy%20on%20${CI_PROJECT_NAME}%20is%20failed,%20Pipeline:%20${CI_PIPELINE_URL}%20by%20${GITLAB_USER_LOGIN}
-    # only:
-    #     - production
+    only:
+        - production
+        - staging
